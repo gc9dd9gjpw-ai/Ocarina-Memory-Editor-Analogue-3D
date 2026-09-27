@@ -1,0 +1,13 @@
+FIRST GITHUB UPLOAD
+===================
+
+1. Open your empty repository:
+   gc9dd9gjpw-ai/Ocarina-Memory-Editor-Analogue-3D
+2. Choose Add file -> Upload files.
+3. Upload the CONTENTS of this folder (README.md, source, docs, etc.), not this instruction file if you prefer.
+4. Commit directly to main with message:
+   Initial public v3.0.0 release
+
+Do NOT upload any ROMs or personal Analogue Memory captures.
+
+After the repository is initialized, the downloadable Windows package can be attached to a GitHub Release named v3.0.0.

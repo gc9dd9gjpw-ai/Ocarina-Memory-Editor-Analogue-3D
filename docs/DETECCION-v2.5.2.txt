@@ -1,0 +1,82 @@
+﻿DETECCIÓN v2.5.2
+
+PNG: se recorren los chunks por su longitud y se valida su CRC, no se busca
+IEND como texto suelto. La etiqueta de texto A3DContent es opcional: falta en Memories R01 antiguos.
+La identificación del contenedor se basa en el bloque apmd y su magic R01/R02.
+Antes o después de IEND se identifica el bloque apmd (0x810000 bytes de datos).
+RDRAM de 8 MiB = inicio del bloque apmd + 0x10008 = inicio de sus datos + 0x10000.
+MemoryFile.Payload representa el inicio de DATOS, no el inicio del bloque.
+
+Se buscan las firmas ZELDAZ dentro de RDRAM, byte a byte. El candidato empieza
+0x1C bytes antes y debe caber completo en RDRAM. Se validan entrada, edad,
+salud/capacidad, número de archivo, modo de juego, inventario por ranura,
+intercambios, mejoras, magia, munición, rupias, Skulltulas, flags de mazmorra
+y llaves. Los bits reservados se preservan y no provocan rechazo. FFFFFFFF en entrada/edad se rechaza.
+No se fuerzan relaciones entre recompensas y contadores que el propio editor
+permite cambiar de forma independiente. No se interpretan bits desconocidos
+de eventos/escenas como prueba de corrupción.
+
+Tras descartar plantillas y slots SRAM, se puntúa la coherencia de cada
+candidato. Se selecciona el máximo único; un empate en el máximo se rechaza.
+No se usa checksum, referencias del ejecutable, build ni IDs como desempate.
+No hay direcciones específicas de revisión en el detector.
+Cart ID/revisión y Source ID son solo información visual; pueden faltar.
+El checksum RAM puede estar obsoleto: no interviene en la selección. Se
+recalcula al editar, junto con CRC apmd, y se comprueba al releer la copia.
+
+PlayState se detecta aparte por estructura para conservar la sincronización
+de recompensas en la escena viva. Su ausencia no invalida el SaveContext.
+Si no es único, solo se bloquean las operaciones que necesitan sincronizar
+flags de escena (piezas/corazones y módulos inventario/equipo/mejoras/mazmorras).
+El resto de ediciones continúa usando el SaveContext detectado.
+
+Fuentes estructurales consultadas:
+https://github.com/zeldaret/oot/blob/main/include/save.h
+https://github.com/zeldaret/oot/blob/main/include/tables/entrance_table.h
+
+El alcance sigue siendo OoT con estructuras y catálogo vanilla; no se
+certifica compatibilidad universal con hacks o Master Quest.
+
+CORRECCIÓN 2.5.2: COPIAS SRAM EN RDRAM
+Antes de contar candidatos se excluyen las ranuras de un bloque SRAM
+identificado por su cabecera: ajustes válidos y magic 98 09 10 21 ZELDA.
+El bloque debe caber completo (0x8000) en RDRAM. Sus seis ranuras empiezan
+a +0x20 con stride 0x1450: tres archivos y tres backups. Son offsets del
+formato SRAM, no direcciones RAM de una revisión del juego.
+No se usan checksum ni diferencias de salud para decidir qué candidato gana.
+Una copia fuera de SRAM se compara por coherencia; si empata con el mejor
+candidato, sigue siendo ambigua.
+Fuente: https://github.com/zeldaret/oot/blob/main/src/code/z_sram.c
+
+PUNTUACIÓN DE COHERENCIA (máximo 156)
+100 puntos base para candidatos que superan validación estructural estricta.
+11 grupos de estado con 4 puntos cada uno: modo de juego normal, día/noche, escena guardada, capa,
+reaparición, título de escena, temporizadores, HUD, estados de magia,
+capacidad/fill de magia y opciones de idioma/sonido/apuntado. Un modo de juego reconocido distinto
+del normal resta evidencia, pero no se considera corrupción.
+6 relaciones con 2 puntos cada una: nivel/adquisición de magia, doble magia,
+magia actual/capacidad viva, rupias/cartera, munición/inventario/capacidades,
+defensa/adquisición. La suma mide coherencia, no probabilidad ni certeza.
+No se premia tener más corazones, objetos o progreso. Una incoherencia en
+estas relaciones resta evidencia sin invalidar ediciones independientes
+que el editor permite (p.ej. contador de Skulltulas sin flags de recogida).
+Los candidatos conservan diagnóstico y puntuación en OotDetection.Candidates.
+DIAGNOSTICO-v2.5.2.txt recoge el resultado de todas las muestras reales.
+
+GENERALIZACIÓN Y LÍMITES
+Ningún archivo de tests se carga en la aplicación ni participa en la selección.
+Las direcciones conocidas solo se comparan en las pruebas de regresión.
+Las constantes de producción describen formatos (PNG/apmd/RDRAM, SaveContext,
+SRAM) y dominios de campos de OoT; no ubicaciones RAM por región o revisión.
+No se utiliza A3DContent, título, build, Cart ID ni Source ID para aceptar o
+clasificar candidatos. Los IDs solo se muestran después de la detección.
+Los campos de runtime se puntúan como evidencia adicional; no se exige un
+patrón de bytes tomado de las muestras. Bits reservados y estados reconocidos
+no se rechazan por no coincidir con los originales usados en regresión.
+La puntuación es una heurística de coherencia estructural, no una garantía
+universal de identificación frente a dos copias arbitrarias del estado vivo.
+
+SyntheticTests.cs construye ocho PNG completos desde cero, sin leer muestras,
+sin metadatos de cartucho, con posiciones distintas de contexto y SRAM,
+plantilla inválida, seis copias SRAM, bits reservados y apmd antes/después de
+IEND. Se verifica apertura, edición, reapertura y preservación de SRAM.

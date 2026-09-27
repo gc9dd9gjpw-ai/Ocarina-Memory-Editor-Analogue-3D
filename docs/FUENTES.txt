@@ -1,0 +1,3 @@
+FUENTES v2.4
+Ver FUENTES-v2.4.md, FLAGS-v2.4.tsv y source-hashes.tsv.
+Estas referencias sustituyen la documentación histórica v2.3.

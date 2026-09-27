@@ -1,0 +1,26 @@
+# Build output
+bin/
+obj/
+*.pdb
+*.user
+*.suo
+.vs/
+
+# Local test data / game files
+*.z64
+*.n64
+*.v64
+*.sav
+*.sra
+*.eep
+*.fla
+*.mpk
+*.img
+
+# Analogue Memories are user data; do not commit test captures
+*Memory*.png
+Unknown Cartridge*.png
+
+# OS/editor files
+.DS_Store
+Thumbs.db

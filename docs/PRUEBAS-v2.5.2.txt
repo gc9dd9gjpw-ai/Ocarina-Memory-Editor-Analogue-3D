@@ -1,0 +1,72 @@
+﻿VALIDACIÓN v2.5.2 · 27/09/2026
+
+Compilación Windows .NET Framework: correcta, versión 2.5.2.0.
+Ejecución completa de tests/Probar.ps1: PASS 2870 assertions.
+Incluye aserciones por byte modificado; no son 2870 pruebas en hardware.
+
+Ocho entradas reales (cinco layouts de revisión):
+- spanish-original.png: NTSC 1.0 traducido, RAM 8011A5D0, checksum vivo obsoleto.
+- ntsc-11.png: NTSC 1.1, RAM 8011A790, checksum vivo obsoleto.
+- ntsc-12.png: NTSC 1.2, RAM 8011AC80, checksum vivo obsoleto.
+- pal-10-original.png: PAL 1.0, RAM 801183D0, CRC original válido.
+- english-crc-repaired.png: PAL 1.0, RAM 801183D0, CRC reparado en v2.4.
+- pal-11.png: PAL 1.1, RAM 80118410, checksum vivo obsoleto.
+- unknown-r01.png: R01 sin A3DContent, NTSC 1.2, RAM 8011AC80.
+  Apertura en interfaz, 14 módulos, guardado y reapertura comprobados.
+Las direcciones esperadas están solo en tests/DetectionTests.cs.
+Los fixtures corruptos heredados siguen rechazándose.
+
+Cobertura:
+- Los 14 módulos por separado: checksum, idempotencia, reapertura y original.
+- Todos los módulos juntos: corazones, Skulltulas, medallones, equipo,
+  inventario, capacidades, magia, canciones, recompensas y mazmorras.
+- Cada campo de recursos, cada ranura de inventario y llaves por mazmorra.
+- Escrituras limitadas al SaveContext detectado, flags vivos de la escena
+  identificada y CRC apmd. Captura y otros chunks conservados.
+- SaveContext reubicado a RAM +700000 sin adaptar referencias MIPS, seguido
+  de edición completa en esa ubicación.
+- RAM aislada sin código, build, cabecera/cartucho ni PlayState, en cuatro
+  posiciones: inicio, dirección arbitraria no alineada, +700000 y último
+  contexto completo que cabe en RDRAM.
+- ID desconocido y cabecera de cartucho ausente; aceptados.
+- Candidato válido fuera de RDRAM; ignorado.
+- Plantilla con entrada/edad FFFFFFFF; rechazada.
+- Dos candidatos válidos; rechazo por ambigüedad.
+- Corrupción independiente de entrada, edad, salud, rupias, magia, inventario,
+  intercambios, munición, mejoras, questItems, mazmorras, llaves y modo de juego.
+- Sin candidato, RDRAM incompleta, PNG truncado y CRC corrupto; rechazados.
+- Checksum RAM obsoleto; admitido, recalculado y verificado al guardar.
+- Escena sintética de Gohma: flag de contenedor sincronizado en RAM y guardado.
+- PlayState ausente: detección y edición de campos simples permitidas;
+  módulos con sincronización de escena bloqueados antes de escribir.
+- Protección de original y destino existente; guardado y lectura en disco.
+- Interfaz: abrir cada muestra, selección global, opciones y restablecimiento.
+  Captura de la pestaña Completar inspeccionada visualmente.
+
+Fuentes del catálogo de v2.4 conservadas, sin modificar sus ubicaciones.
+Reproducción: tests/Probar.ps1; genera resultados en tests/work.
+Compilación: Compilar.ps1; requiere .NET Framework 4.x.
+Hashes de las muestras: tests/FIXTURES.txt.
+
+NO VERIFICADO: carga de esta compilación en Analogue 3D físico, visita de cada
+ubicación, Master Quest, randomizers, hacks con estructuras distintas.
+
+Se rechaza magic Analogue inválido incluso con CRC apmd recalculado.
+
+REGRESIÓN 2.5.2
+- pal-10-sram.png: Memory intacto con contexto vivo y dos copias SRAM válidas.
+  Se abre, pasan las ediciones individuales y combinadas, se guarda y relee.
+  Las copias SRAM quedan intactas (ver comprobaciones de límites de escritura).
+- Ocho PNG generados desde cero sin copiar ningún SaveContext de las muestras.
+  Posiciones reproducibles nuevas para contexto y contenedor SRAM; sin IDs,
+  Cart ID, build, A3DContent, referencias MIPS ni direcciones de revisión.
+  Contextos de ambas edades y distinto estado inicial, con slots
+  SRAM sintetizados y plantilla inválida. Apertura, edición y reapertura.
+- Bits reservados preservados; modos de juego conocidos no rechazados.
+- Copias en las seis ranuras SRAM excluidas por estructura del contenedor.
+- SRAM sin contexto vivo: rechazo. Cabecera falsa: no se presume SRAM.
+- Contextos con igual coherencia: rechazo por empate. Un campo de runtime
+  incoherente discrimina copias y no se favorece al primer candidato ni
+  a la menor dirección. Checksum obsoleto nunca descalifica al contexto vivo.
+- Código inspeccionado: direcciones de las cinco revisiones solo en tests.
+- DIAGNOSTICO-v2.5.2.txt contiene el desglose de candidatos de las muestras.
