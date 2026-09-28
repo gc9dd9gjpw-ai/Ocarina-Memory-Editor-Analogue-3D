@@ -1,8 +1,29 @@
 # Ocarina Memory Editor for Analogue 3D — v3.0.0
 
+<p align="center">
+  <img src="ocarina.jpg" alt="Ocarina Memory Editor for Analogue 3D" width="630">
+</p>
+
 Windows editor for **The Legend of Zelda: Ocarina of Time** Memories created by Analogue 3D / 3DOS.
 
 > Independent fan-made utility. It does not contain ROMs, Nintendo game data, firmware, or Analogue software. The Legend of Zelda, Ocarina of Time and Nintendo are trademarks of their respective owners. Analogue and Analogue 3D are trademarks of their respective owners. This project is not affiliated with or endorsed by Nintendo or Analogue.
+
+## Screenshots
+
+### Resources
+![Resources](01-Recursos-Ocarina-Memory-Editor.png)
+
+### Items
+![Items](02-Objetos-Ocarina-Memory-Editor.png)
+
+### Equipment
+![Equipment](03-Equipo-Ocarina-Memory-Editor.png)
+
+### Dungeons
+![Dungeons](04-Mazmorras-Ocarina-Memory-Editor.png)
+
+### Collectibles
+![Collectibles](05-Coleccionables-Ocarina-Memory-Editor.png)
 
 ## What it does
 
